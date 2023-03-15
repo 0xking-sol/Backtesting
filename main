@@ -1,0 +1,52 @@
+# Import relevant libraries
+import pandas as pd
+import ccxt
+
+# Binance API Variables
+read_binance_key = '<Your_Key_Here>'
+read_binance_secret = '<Your_Secret_Here>'
+
+# Initialising Binance Exchange Class in CCXT
+exchange_id = 'binance'
+binance = ccxt.binance({'enableRateLimit': True})
+
+
+# Loading Symbols from Binance
+binance.load_markets()
+binance_symbols = binance.symbols
+
+
+# Creating Dataframe from CSV file
+df = pd.read_csv('Path_To_File_Here')
+
+# Iterate through rows, taking data points for Tickers and Dates
+for index, row in df.iterrows():
+
+    # Check if string to reduce errors
+    if isinstance(row['Tickers'], str):
+        timestamp = row['Date']
+        two_mins_before_timestamp = (timestamp - 120)
+        
+        # Remove the $ from the Ticker
+        ticker = row['Tickers'][1:].upper() + "/USDT"
+        
+        # Use a Try/Exception function to prevent any errors from stopping
+        try:
+            # Fetch candles in 1m intervals from the Tweet timestamp for the following hour
+            candles_list = binance.fetch_ohlcv(ticker, '1m', since=timestamp, limit=60)
+            
+            # Create a variable for high and low price
+            candle_high = candles_list[0][2]
+            candle_low = candles_list[0][3]
+            lowest_time = candles_list[0][0]
+            highest_time = candles_list[0][0]
+            
+            # Then use recursion to find the highest and lowest price in 60 minutes
+            # Along with respective timestamps
+            for candle in candles_list:
+                if candle[2] > candle_high:
+                    candle_high = candle[2]
+                    highest_time = candle[0]
+
+        except Exception as e:
+            print(e)
