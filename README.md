@@ -7,12 +7,12 @@ binance.fetch_ohlcv(ticker, '1m', since=timestamp, limit=60)
 - This will give 1 minute candles, since the timestamp (in seconds), for 60 candles (60 minutes)
 
 
-# candle[x][0] is timestamp
-# candle[x][1] is open
-# candle[x][2] is high
-# candle[x][3] is low
-# candle[x][4] is close
-# last is volume
+candle[x][0] is timestamp
+candle[x][1] is open
+candle[x][2] is high
+candle[x][3] is low
+candle[x][4] is close
+last is volume
 
 
 Example output:
